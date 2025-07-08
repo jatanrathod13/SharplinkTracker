@@ -1,0 +1,39 @@
+services:
+  # Frontend Next.js Application
+  - type: web
+    name: sharplink-eth-tracker-frontend
+    env: node
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        value: https://sharplink-eth-tracker-backend.onrender.com
+    
+  # Backend FastAPI Application  
+  - type: web
+    name: sharplink-eth-tracker-backend
+    env: python
+    plan: starter
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && gunicorn main:app -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: COINGECKO_API_KEY
+        sync: false
+      - key: ALCHEMY_API_KEY
+        sync: false
+      - key: TREASURY_WALLET_ADDRESS
+        value: "0x742d35Cc6634C0532925a3b8D2a2c2c8e5a2e1a8"
+      - key: STOCK_TICKER
+        value: "SGLG"
+      - key: PYTHONPATH
+        value: "/opt/render/project/src/backend"
+
+databases:
+  - name: treasury-tracker-db
+    databaseName: treasury_tracker
+    user: treasury_user 
