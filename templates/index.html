@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBET Ethereum Treasury Tracker</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="/static/logo-black.png" alt="Sharplink Gaming Logo" class="logo">
+            <h1>Sharplink Gaming (SBET) Ethereum Treasury Tracker</h1>
+        </header>
+
+        <main>
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <h2>SBET Price</h2>
+                    <p>${{ sbet_price }}</p>
+                </div>
+                <div class="kpi-card">
+                    <h2>ETH Price</h2>
+                    <p>${{ eth_price }}</p>
+                </div>
+                <div class="kpi-card">
+                    <h2>Latest ETH Holdings</h2>
+                    <p>{{ latest_eth_holding }} ETH</p>
+                </div>
+                <div class="kpi-card">
+                    <h2>mNAV</h2>
+                    <p>{{ mnav }}x</p>
+                </div>
+                <div class="kpi-card">
+                    <h2>ETH Concentration</h2>
+                    <p>{{ eth_concentration }}%</p>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="ethHoldingsChart"></canvas>
+            </div>
+
+            <div class="analysis-table">
+                <h2>mNAV Price Projections</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Multiplier</th>
+                            <th>Projected SBET Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1x mNAV</td>
+                            <td>${{ projected_prices['1x'] | round(2) }}</td>
+                        </tr>
+                        <tr>
+                            <td>2x mNAV</td>
+                            <td>${{ projected_prices['2x'] | round(2) }}</td>
+                        </tr>
+                        <tr>
+                            <td>4x mNAV</td>
+                            <td>${{ projected_prices['4x'] | round(2) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <footer>
+            <p>Last updated: {{ last_updated }}</p>
+        </footer>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('ethHoldingsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ chart_labels | tojson }},
+                datasets: [{
+                    label: 'ETH Holdings Over Time',
+                    data: {{ chart_data | tojson }},
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'ETH Holdings'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
